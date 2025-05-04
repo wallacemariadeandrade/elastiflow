@@ -1,0 +1,80 @@
+services:
+  es_master1:
+    image: elasticsearch:8.18.0
+    restart: unless-stopped
+    hostname: es_master1
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 131072
+        hard: 131072
+      nproc: 8192
+      fsize: -1
+    network_mode: host
+    volumes:
+      - elasticsearch:/usr/share/elasticsearch/data
+    environment:
+      ES_JAVA_OPTS: '-Xms2g -Xmx2g'
+      cluster.name: elastiflow
+      node.name: es_master1
+      bootstrap.memory_lock: 'true'
+      network.bind_host: 0.0.0.0
+      http.port: 9200
+      http.publish_port: 9200
+      transport.port: 9300
+      transport.publish_port: 9300
+      cluster.initial_master_nodes: 'es_master1'
+      indices.query.bool.max_clause_count: 8192
+      search.max_buckets: 250000
+      action.destructive_requires_name: 'true'
+      xpack.security.enabled: 'false'
+
+  kibana:
+    image: kibana:8.18.0
+    restart: unless-stopped
+    hostname: NODE_NAME
+    network_mode: host
+    environment:
+      TELEMETRY_OPTIN: 'false'
+      TELEMETRY_ENABLED: 'false'
+      SERVER_NAME: 'NODE_NAME'
+      SERVER_HOST: '0.0.0.0'
+      SERVER_PORT: 5601
+      SERVER_MAXPAYLOADBYTES: 8388608
+      ELASTICSEARCH_HOSTS: 'http://localhost:9200'
+      ELASTICSEARCH_REQUESTTIMEOUT: 132000
+      ELASTICSEARCH_SHARDTIMEOUT: 120000
+      ELASTICSEARCH_SSL_VERIFICATIONMODE: 'none'
+      KIBANA_AUTOCOMPLETETIMEOUT: 3000
+      KIBANA_AUTOCOMPLETETERMINATEAFTER: 2500000
+      VIS_TYPE_VEGA_ENABLEEXTERNALURLS: 'true'
+      XPACK_MAPS_SHOWMAPVISUALIZATIONTYPES: 'true'
+      XPACK_ENCRYPTEDSAVEDOBJECTS_ENCRYPTIONKEY: 'ElastiFlow_0123456789_0123456789_0123456789'
+
+  flow-collector:
+    image: elastiflow/flow-collector:7.10.0
+    container_name: flow-collector
+    restart: 'unless-stopped'
+    network_mode: 'host'
+    volumes:
+      - elastiflow:/etc/elastiflow
+    environment:
+      EF_LICENSE_ACCEPTED: 'true'
+      EF_FLOW_SERVER_UDP_IP: '0.0.0.0'
+      EF_FLOW_SERVER_UDP_PORT: 9996
+      EF_FLOW_OUTPUT_ELASTICSEARCH_ENABLE: 'true'
+      EF_FLOW_OUTPUT_ELASTICSEARCH_TIMESTAMP_SOURCE: 'end'
+      EF_FLOW_OUTPUT_ELASTICSEARCH_INDEX_TEMPLATE_ILM_LIFECYCLE: 'elastiflow'
+      EF_FLOW_DECODER_ENRICH_DNS_ENABLE: 'true'
+      EF_FLOW_DECODER_ENRICH_DNS_NAMESERVER_IP: '1.1.1.1'
+      EF_FLOW_DECODER_ENRICH_MAXMIND_ASN_ENABLE: 'true'
+      EF_FLOW_DECODER_ENRICH_MAXMIND_GEOIP_ENABLE: 'true'
+      EF_FLOW_DECODER_ENRICH_MAXMIND_GEOIP_LANG: 'pt-BR'
+      EF_FLOW_DECODER_ENRICH_MAXMIND_ASN_PATH: 'GeoLite2-ASN.mmdb'
+      EF_FLOW_DECODER_ENRICH_MAXMIND_GEOIP_PATH: 'GeoLite2-City.mmdb'
+
+volumes:
+  elastiflow:
+  elasticsearch:
