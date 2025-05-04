@@ -1,6 +1,11 @@
 #!/bin/bash
-echo 'vm.max_map_count=262144' | tee -a /etc/sysctl.conf
-sysctl -p
+echo "####################"
+echo "#    ATTENTION     #
+echo "####################"
+echo "You need to set 'vm.max_map_count=262144 in sysctl.conf'. Use these comands:"
+echo "vm.max_map_count=262144' | tee -a /etc/sysctl.conf"
+echo "sysctl -p"
+
 docker compose create
 cp GeoLite2-ASN.mmdb /var/lib/docker/volumes/elastiflow_elastiflow/_data/
 cp GeoLite2-City.mmdb /var/lib/docker/volumes/elastiflow_elastiflow/_data/
