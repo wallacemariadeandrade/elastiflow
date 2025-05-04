@@ -1,6 +1,6 @@
 #!/bin/bash
 echo "####################"
-echo "#    ATTENTION     #
+echo "#    ATTENTION     #"
 echo "####################"
 echo "You need to set 'vm.max_map_count=262144 in sysctl.conf'. Use these comands:"
 echo "vm.max_map_count=262144' | tee -a /etc/sysctl.conf"
