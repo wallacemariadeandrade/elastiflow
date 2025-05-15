@@ -2,6 +2,7 @@
 Runs Elastiflow in Docker
 
 - Netflow port is 9996 by default
+- Use override file to enable manual sampler definitions. You'll also need to update sample_rate.yml inside flowcoll settings.
 
 ## references
 
