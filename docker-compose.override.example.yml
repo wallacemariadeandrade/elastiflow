@@ -1,0 +1,6 @@
+services:
+  flow-collector:
+    environment:
+      EF_PROCESSOR_ENRICH_SAMPLERATE_USERDEF_ENABLE: 'true'
+      EF_PROCESSOR_ENRICH_SAMPLERATE_USERDEF_OVERRIDE: 'true'
+      # need to specify sampler rate in /var/lib/docker/volumes/elastiflow_elastiflow/_data/settings/sample_rate.yml
